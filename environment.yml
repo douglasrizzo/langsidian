@@ -1,0 +1,14 @@
+name: langsidian
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.10.*
+  - pip
+  - pip:
+      - langchain
+      - sentence_transformers
+      - chromadb
+      - lark
+      - gpt4all
+      - ipykernel
+      - google-re2
