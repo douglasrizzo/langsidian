@@ -25,7 +25,7 @@ if __name__ == "__main__":
   logging.basicConfig(
     encoding="utf-8",
     level=logging.DEBUG,
-    handlers=[logging.FileHandler(f"{datetime.now():%Y-%m-%d %H:%M:%S}.log"), logging.StreamHandler()],
+    handlers=[logging.FileHandler(f"logs/{datetime.now():%Y-%m-%d %H:%M:%S}.log"), logging.StreamHandler()],
     format="%(asctime)s | %(levelname)-8s | %(lineno)04d | %(message)s",
   )
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
