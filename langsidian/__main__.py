@@ -31,21 +31,24 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
   parser.add_argument(
+    "-d",
     "--docs_path",
     type=Path,
     help="Path to the directory containing the documents.",
     default=(Path.home() / "Documents" / "Obsidian").absolute(),
   )
   parser.add_argument(
+    "-v",
     "--vectorstore_path",
     type=Path,
     help="Path to the directory where the vectorstore will be stored.",
     default=Path("docs/chroma/"),
   )
   parser.add_argument(
-    "--document_type", type=DocumentBase, help="The type of documents to load.", default=DocumentBase.OBSIDIAN
+    "-t", "--document_type", type=DocumentBase, help="The type of documents to load.", default=DocumentBase.OBSIDIAN
   )
   parser.add_argument(
+    "-m",
     "--ollama_model",
     type=str,
     help="Name of Ollama model to load.",
@@ -54,6 +57,7 @@ if __name__ == "__main__":
   )
 
   parser.add_argument(
+    "-e",
     "--embeddings",
     type=str,
     help="The type of embedding to load.",
