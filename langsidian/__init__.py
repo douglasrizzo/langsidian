@@ -12,6 +12,7 @@ from langchain.text_splitter import MarkdownTextSplitter
 from langchain_community.document_loaders import ObsidianLoader, PyPDFDirectoryLoader
 from langchain_community.llms.ollama import Ollama
 from langchain_community.vectorstores.chroma import Chroma
+from langchain_core.documents import Document
 
 
 class DocumentBase(Enum):
@@ -45,13 +46,7 @@ class ChatBot:
     if document_type == DocumentBase.OBSIDIAN:
       docs = ObsidianLoader(docs_path, collect_metadata=True, encoding="UTF-8").load()
       logging.info("Loaded %d documents", len(docs))
-      obsidian_hyperlink_pattern = r"\[\[([^\]]*?)\|([^\[]*?)\]\]"
-      for doc in docs:
-        s = re2.search(obsidian_hyperlink_pattern, doc.page_content)
-        if s is not None:
-          new_doc = re2.sub(obsidian_hyperlink_pattern, r"\2", doc.page_content)
-          doc.page_content = new_doc
-        doc.page_content = doc.page_content.replace("[[", "").replace("]]", "")
+      self.__clean_obsidian_docs(docs)
     else:
       docs = PyPDFDirectoryLoader(str(docs_path)).load()
 
@@ -79,10 +74,25 @@ class ChatBot:
     qa_chain_prompt = PromptTemplate.from_template(template)
     self.qa_chain = RetrievalQA.from_chain_type(
       llm,
-      retriever=vectordb.as_retriever(search_type="mmr"),
+      retriever=vectordb.as_retriever(search_type="mmr", search_kwargs={"k": 6, "fetch_k": 10, "lambda_mult": 0.7}),
       return_source_documents=True,
       chain_type_kwargs={"prompt": qa_chain_prompt},
     )
+
+  @staticmethod
+  def __clean_obsidian_docs(docs: list[Document]) -> None:
+    """Clean Obsidian-style hyperlinks from a list of LangChain Document objects. The process is done in-place.
+
+    Args:
+        docs (list[Document]): The list of Document objects to be cleaned.
+    """
+    obsidian_hyperlink_pattern = r"\[\[([^\]]*?)\|([^\[]*?)\]\]"
+    for doc in docs:
+      s = re2.search(obsidian_hyperlink_pattern, doc.page_content)
+      if s is not None:
+        new_doc = re2.sub(obsidian_hyperlink_pattern, r"\2", doc.page_content)
+        doc.page_content = new_doc
+      doc.page_content = doc.page_content.replace("[[", "").replace("]]", "")
 
   def answer(self, query: str) -> str:
     """Answer a query.
