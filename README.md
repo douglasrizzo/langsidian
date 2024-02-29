@@ -1,3 +1,5 @@
-# Retrieval augmented generation on an Obsidian document base using LangChain
+# Question-answering, LLM-powered, RAG-backed, locally runnable chatbots
 
-<https://www.coursera.org/projects/langchain-chat-with-your-data-project>
+This repo contains the code base of my projects involving question-answering LLM-powered RAG-backed chatbots.
+
+It all started after I took this course: https://www.coursera.org/projects/langchain-chat-with-your-data-project
